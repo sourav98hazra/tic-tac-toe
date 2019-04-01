@@ -1,0 +1,802 @@
+import java.awt.*;  
+import java.awt.event.*; 
+class mywindowclose  extends  WindowAdapter
+{
+	public void windowClosing(WindowEvent  we)
+	{
+		System.exit(0);
+	}
+}
+public class OurTicTacToe extends Frame implements ActionListener,Runnable
+{  
+int width;//size for label string increase thread
+Button b1,b2,b3,b4,b5,b6,b7,b8,b9,bc,bg,br;
+Panel p1;
+String msg=" ";
+int flag=0,count=0,check=0;
+Label l,l1,l2,l3,l4,l5,l6,l7;
+TextField tf1,tf2;
+Font f=new Font("Bauhaus 93",Font.ITALIC+Font.BOLD,16);
+Font f1=new Font("Impact",Font.ITALIC+Font.BOLD,32);//fonts not working
+Font f2=new Font("Cooper",Font.BOLD+Font.ITALIC,15);
+int ac[][]=new int[3][3];
+int winx=0,wino=0;
+Menu m1,m2;
+MenuBar mb;
+MenuItem mi1,mi2,mi3,mi4,mi5,mi6,mi7,mi8;
+Thread t=new Thread(this);
+
+OurTicTacToe()
+{
+mb=new MenuBar();
+m1=new Menu("GAME");
+m2=new Menu("THEMES");
+mi1=new MenuItem("new");
+mi2=new MenuItem("restart");
+mi3=new MenuItem("quit");
+mi4=new MenuItem("Indian");
+mi5=new MenuItem("Royal");
+mi6=new MenuItem("Thedefault");
+mi7=new MenuItem("Jewel");
+mi8=new MenuItem("Christiano");
+mb.add(m1);
+mb.add(m2);
+m1.add(mi1);
+m1.add(mi2);
+m1.add(mi3);
+m2.add(mi4);
+m2.add(mi5);
+m2.add(mi6);
+m2.add(mi7);
+m2.add(mi8);
+
+mi1.addActionListener(this);
+mi2.addActionListener(this);
+mi3.addActionListener(this);
+mi4.addActionListener(this);
+mi5.addActionListener(this);
+mi6.addActionListener(this);
+mi7.addActionListener(this);
+mi8.addActionListener(this);
+
+setMenuBar(mb);
+setLayout(null);
+
+p1=new Panel();
+p1.setLayout(null);
+p1.setBackground(Color.black);
+GridLayout g=new GridLayout(3,3,3,3);//grid layout for panel of buttons
+p1.setLayout(g);
+p1.setBounds(330,300,180,180);
+
+l=new Label();
+l.setBounds(305,520,600,80);
+l.setFont(new Font("Bauhaus 93",Font.ITALIC+Font.BOLD,30));//label to print who winner is
+add(l);
+
+l1=new Label("player1:");
+l2=new Label("player2:");
+l3=new Label("p1");
+l4=new Label("p2");
+l5=new Label("Score1");
+l6=new Label("Score2");
+l7=new Label("THE TIC TAC TOE(p1->X & p2->O)");
+l.setForeground(new Color(139,69,19));
+l1.setBounds(300,100,200,50);
+l2.setBounds(300,140,200,20);
+l3.setBounds(210,300,100,30);
+l4.setBounds(590,300,100,30);
+l6.setBounds(588,333,100,30);
+l5.setBounds(210,333,100,30);
+l7.setBounds(310,40,300,50);
+tf1=new TextField();
+tf2=new TextField();
+tf1.setBounds(370,112,150,20);
+tf2.setBounds(370,140,150,20);
+b1=new Button();
+b2=new Button();
+b3=new Button();
+b4=new Button();
+b5=new Button();
+b6=new Button();                       
+b7=new Button();
+b8=new Button();
+b9=new Button();
+bc=new Button("continue");
+bg=new Button("go");
+br=new Button("restart");
+bc.setBounds(330,610,90,50);
+bg.setBounds(410,170,60,25);
+br.setBounds(425,610,70,50);
+b1.addActionListener(this);
+b2.addActionListener(this);
+b3.addActionListener(this);
+b4.addActionListener(this);
+b5.addActionListener(this);
+b6.addActionListener(this);
+b7.addActionListener(this);
+b8.addActionListener(this);
+b9.addActionListener(this);
+bc.addActionListener(this);
+bg.addActionListener(this);
+br.addActionListener(this);
+b1.setFont(f1);
+b2.setFont(f1);
+b3.setFont(f1);
+b4.setFont(f1);
+b5.setFont(f1);
+b6.setFont(f1);
+b7.setFont(f1);
+b8.setFont(f1);
+b9.setFont(f1);
+bc.setFont(f);
+br.setFont(f);
+p1.add(b1);
+p1.add(b2);
+p1.add(b3);
+p1.add(b4);
+p1.add(b5);
+p1.add(b6);
+p1.add(b7);
+p1.add(b8);
+p1.add(b9);
+add(p1);
+add(bc);
+add(tf1);
+add(tf2);
+add(l1);
+add(l2);
+add(l3);
+add(l4);
+add(l5);
+add(l6);
+add(bg);
+add(br);
+add(l1);
+add(l7);
+l3.setFont(f2);
+l4.setFont(f2);
+bg.setFont(f2);
+l5.setFont(f2);
+l6.setFont(f2);
+l2.setFont(f2);
+l1.setFont(f2);
+l7.setFont(f2);
+for(int i=0;i<3;i++)
+for(int j=0;j<3;j++)
+ac[i][j]=2;//initialization of access array
+p1.setEnabled(false);
+}
+
+
+void dis()//disable panel
+{
+p1.setEnabled(false);
+}
+
+
+public void run()//thread to run to display winner
+{
+
+try{
+
+width=10;//varying size of font of l labels text.
+String xstr=l.getText();
+
+while(width!=28)
+{
+if(width<=30)
+l.setFont(new Font("Impact",Font.BOLD,width));
+width+=1;
+l.setText(xstr);
+Thread.sleep(70);
+}
+
+  }
+catch(Exception e){}
+
+}
+
+ public void actionPerformed(ActionEvent e)
+    {       
+//count is used for tie check and count is also responsible for printing X and O alternatively(by checking count is odd or even).
+check=0;flag=0;
+if((e.getSource()==mi4)||(e.getSource()==mi5)||(e.getSource()==mi6)||(e.getSource()==mi7)||(e.getSource()==mi8))
+check=1; //this condition is given because when we click a button the actionperformed() runs again when a flag is aldready 3 and increments winx value with every click on buttons like menu ones in middle of the game
+
+if(e.getSource()==bg)//go button
+{
+
+if((tf1.getText().isEmpty())||(tf2.getText().isEmpty())) //check if any of the fields are empty and if it is then display to full it.
+l.setText("fill both fields!");
+else
+{
+String msg=tf1.getText();
+String msg1=tf2.getText();
+l3.setText(msg);
+l4.setText(msg1);
+tf1.setEnabled(false);
+tf2.setEnabled(false);
+bg.setEnabled(false);
+p1.setEnabled(true);
+l.setText("");
+}
+
+}
+
+
+
+	if(e.getSource()==b1)
+{
+count++;
+if(count%2==0)
+{
+b1.setLabel("O");
+ac[0][0]=0;//filling access matrix with 0 for O's check for any 3 O's combo in every direction by access matrix.
+}
+if(count%2!=0)
+{
+b1.setLabel("X");
+ac[0][0]=1;////filling access matrix with 1 for x's check for any 3 x's combo in every direction by access matrix.
+}
+b1.setEnabled(false);
+
+}
+	
+	if(e.getSource()==b2)
+{
+count++;
+if(count%2==0)
+{
+b2.setLabel("O");
+ac[0][1]=0;
+}
+if(count%2!=0){
+b2.setLabel("X");
+ac[0][1]=1;
+}
+b2.setEnabled(false);
+}
+
+	if(e.getSource()==b3)
+{
+count++;
+if(count%2==0){
+b3.setLabel("O");
+ac[0][2]=0;}
+if(count%2!=0){
+b3.setLabel("X");
+ac[0][2]=1;}
+b3.setEnabled(false);
+
+}
+
+	if(e.getSource()==b4)
+{
+count++;
+if(count%2==0)
+{
+b4.setLabel("O");
+ac[1][0]=0;
+}
+if(count%2!=0){
+b4.setLabel("X");
+ac[1][0]=1;
+}
+b4.setEnabled(false);
+}
+
+	if(e.getSource()==b5)
+{
+count++;
+if(count%2==0)
+{
+b5.setLabel("O");
+ac[1][1]=0;
+}
+if(count%2!=0){
+b5.setLabel("X");
+ac[1][1]=1;
+}
+b5.setEnabled(false);
+
+}
+
+	if(e.getSource()==b6)
+{
+count++;
+if(count%2==0)
+{
+b6.setLabel("O");
+ac[1][2]=0;
+}
+if(count%2!=0){
+b6.setLabel("X");
+ac[1][2]=1;
+}
+b6.setEnabled(false);
+}
+
+	if(e.getSource()==b7)
+{
+count++;
+
+if(count%2==0)
+{
+b7.setLabel("O");
+ac[2][0]=0;
+}
+if(count%2!=0){
+b7.setLabel("X");
+ac[2][0]=1;
+}
+b7.setEnabled(false);
+}
+
+	if(e.getSource()==b8)
+{
+count++;
+if(count%2==0)
+{
+b8.setLabel("O");
+ac[2][1]=0;
+}
+if(count%2!=0){
+b8.setLabel("X");
+ac[2][1]=1;
+}
+b8.setEnabled(false);
+}
+
+	if(e.getSource()==b9)
+{
+count++;
+if(count%2==0)
+{
+b9.setLabel("O");
+ac[2][2]=0;
+}
+if(count%2!=0){
+b9.setLabel("X");
+ac[2][2]=1;
+}
+b9.setEnabled(false);
+}
+
+	if(e.getSource()==bc||e.getSource()==mi1)//clear-set normal all except winx,wino values
+{
+for(int i=0;i<3;i++)
+for(int j=0;j<3;j++)
+ac[i][j]=2;
+count=0;
+b1.setLabel(" ");
+b2.setLabel(" ");
+b3.setLabel(" ");
+b4.setLabel(" ");
+b5.setLabel(" ");
+b6.setLabel(" ");
+b7.setLabel(" ");
+b8.setLabel(" ");
+b9.setLabel(" ");
+flag=0;
+l.setText(" ");
+b1.setEnabled(true);
+b2.setEnabled(true);
+b3.setEnabled(true);
+b4.setEnabled(true);
+b5.setEnabled(true);
+b6.setEnabled(true);
+b7.setEnabled(true);
+b8.setEnabled(true);
+b9.setEnabled(true);
+p1.setEnabled(true);
+ width=10;
+}
+
+
+
+if(count==9)//tie
+{
+l.setText("its Tie");
+}
+
+if(e.getSource()==br||e.getSource()==mi2)//restart-reset all
+{
+bg.setEnabled(true);
+l3.setText("p1");
+l4.setText("p2");
+tf1.setEnabled(true);
+tf2.setEnabled(true);
+tf1.setText("");
+tf2.setText("");
+l5.setText(" ");
+l6.setText(" ");
+for(int i=0;i<3;i++)
+for(int j=0;j<3;j++)
+ac[i][j]=2;
+count=0;
+b1.setLabel(" ");
+b2.setLabel(" ");
+b3.setLabel(" ");
+b4.setLabel(" ");
+b5.setLabel(" ");
+b6.setLabel(" ");
+b7.setLabel(" ");
+b8.setLabel(" ");
+b9.setLabel(" ");
+flag=0;
+l.setText(" ");
+b1.setEnabled(true);
+b2.setEnabled(true);
+b3.setEnabled(true);
+b4.setEnabled(true);
+b5.setEnabled(true);
+b6.setEnabled(true);
+b7.setEnabled(true);
+b8.setEnabled(true);
+b9.setEnabled(true);
+wino=0;//*//
+winx=0;//*//
+p1.setEnabled(false);//*//
+ width=10;
+
+}
+
+
+
+if(e.getSource()==mi3)//quit menuitem
+{
+System.exit(0);
+}
+
+if(e.getSource()==mi4)//indian theme
+{
+Color C=new Color(255,128,0);
+Color C1=(new Color(0,128,0));
+l1.setBackground(C);
+l2.setBackground(C);
+l3.setBackground(C);
+l4.setBackground(C);
+l5.setBackground(C);
+l6.setBackground(C);
+l7.setBackground(C);
+this.setBackground(C);
+
+l1.setForeground(C1);
+l2.setForeground(C1);
+l3.setForeground(C1);
+l4.setForeground(C1);
+l5.setForeground(C1);
+l6.setForeground(C1);
+l7.setForeground(C1);
+bc.setForeground(C1);
+br.setForeground(C1);
+bg.setForeground(C1);
+this.setForeground(C1);
+tf1.setForeground(C1);
+tf2.setForeground(C1);
+p1.setBackground(C1);
+l.setBackground(C);
+l.setForeground(new Color(0,0,255));
+}
+
+
+if(e.getSource()==mi5)//royal theme
+{
+Color C=new Color(42,28,45);
+Color C1=(new Color(205,175,105));
+l1.setBackground(C);
+l2.setBackground(C);
+l3.setBackground(C);
+l4.setBackground(C);
+l5.setBackground(C);
+l6.setBackground(C);
+l7.setBackground(C);
+this.setBackground(C);
+
+l1.setForeground(C1);
+l2.setForeground(C1);
+l3.setForeground(C1);
+l4.setForeground(C1);
+l5.setForeground(C1);
+l6.setForeground(C1);
+l7.setForeground(C1);
+bc.setForeground(C1);
+br.setForeground(C1);
+bg.setForeground(C1);
+this.setForeground(C1);
+tf1.setForeground(Color.darkGray);
+tf2.setForeground(Color.darkGray);
+p1.setBackground(C1);
+l.setBackground(C);
+l.setForeground(new Color(178,34,34));
+bc.setBackground(Color.gray);
+br.setBackground(Color.gray);
+}
+
+if(e.getSource()==mi6)//the default theme
+{
+Color C=(new Color(128,128,128));
+Color C1=(new Color(255,0,0));
+l1.setBackground(C);
+l2.setBackground(C);
+l3.setBackground(C);
+l4.setBackground(C);
+l5.setBackground(C);
+l6.setBackground(C);
+l7.setBackground(C);
+this.setBackground(C);
+
+l1.setForeground(C1);
+l2.setForeground(C1);
+l3.setForeground(C1);
+l4.setForeground(C1);
+l5.setForeground(C1);
+l6.setForeground(C1);
+l7.setForeground(C1);
+bc.setForeground(C1);
+br.setForeground(C1);
+bg.setForeground(C1);
+this.setForeground(C1);
+tf1.setForeground(C1);
+tf2.setForeground(C1);
+p1.setBackground(Color.black);
+l.setBackground(C);
+l.setForeground(new Color(139,69,19));
+bc.setBackground(Color.gray);
+br.setBackground(Color.gray);
+}
+
+if(e.getSource()==mi7)//jewel theme
+{
+Color C=(new Color(114,28,71));
+Color C1=(new Color(209,164,119));
+l1.setBackground(C);
+l2.setBackground(C);
+l3.setBackground(C);
+l4.setBackground(C);
+l5.setBackground(C);
+l6.setBackground(C);
+l7.setBackground(C);
+this.setBackground(C);
+
+l1.setForeground(C1);
+l2.setForeground(C1);
+l3.setForeground(C1);
+l4.setForeground(C1);
+l5.setForeground(C1);
+l6.setForeground(C1);
+l7.setForeground(C1);
+bc.setForeground(C1);
+br.setForeground(C1);
+bg.setForeground(C1);
+this.setForeground(C1);
+tf1.setForeground(C1);
+tf2.setForeground(C1);
+p1.setBackground(C1);
+l.setBackground(C);
+l.setForeground(new Color(26,44,87));
+bc.setBackground(Color.gray);
+br.setBackground(Color.gray);
+}
+
+if(e.getSource()==mi8)//christiano theme
+{
+Color C=(new Color(43,42,40));
+Color C1=(new Color(252,207,14));
+l1.setBackground(C);
+l2.setBackground(C);
+l3.setBackground(C);
+l4.setBackground(C);
+l5.setBackground(C);
+l6.setBackground(C);
+l7.setBackground(C);
+this.setBackground(C);
+
+l1.setForeground(C1);
+l2.setForeground(C1);
+l3.setForeground(C1);
+l4.setForeground(C1);
+l5.setForeground(C1);
+l6.setForeground(C1);
+l7.setForeground(C1);
+bc.setForeground(C1);
+br.setForeground(C1);
+bg.setForeground(C1);
+this.setForeground(C1);
+tf1.setForeground(Color.darkGray);
+tf2.setForeground(Color.darkGray);
+p1.setBackground(C1);
+l.setBackground(C);
+l.setForeground(new Color(183,157,112));
+bc.setBackground(Color.gray);
+br.setBackground(Color.gray);
+}
+
+//HERE STARTS THE IMPORTANT LOGIC TO CHECK WHICH DIERECTION ITS CONTINUOUSLY IS FILLED.
+
+flag=0;
+for(int i=0;i<3;i++)//row check for combo of x
+{
+if(flag!=3)
+flag=0;
+for(int j=0;j<3;j++)
+{
+if(ac[i][j]==1)
+flag++;
+if(flag==3)
+{
+l.setText("The Winner is "+l3.getText());
+dis();//DISABLE PANEL
+}
+}
+}
+if((flag>=3)&&(check!=1))//>= because in loop in some combos flag goes >3
+{
+++winx;
+l5.setText(Integer.toString(winx));//TO SET THE SCORE BESIDES PANEL
+t.run();
+}
+
+flag=0;
+for(int i=0;i<3;i++)//row check for combo of o
+{
+if(flag!=3)
+flag=0;
+for(int j=0;j<3;j++)
+{
+if(ac[i][j]==0)
+flag++;
+
+if(flag==3)
+{
+l.setText("The Winner is "+l4.getText());
+dis();
+}
+}
+}
+if((flag>=3)&&(check!=1))
+{
+++wino;
+l6.setText(Integer.toString(wino));
+t.run();
+}
+
+flag=0;
+for(int j=0;j<3;j++)//col check for combo of x
+{
+if(flag!=3)
+flag=0;
+for(int i=0;i<3;i++)
+{
+if(ac[i][j]==1)
+flag++;
+if(flag==3)
+{
+l.setText("The Winner is "+l3.getText());
+dis();
+}
+}
+}
+if((flag>=3)&&(check!=1))
+{
+++winx;
+l5.setText(Integer.toString(winx));
+t.run();
+}
+
+flag=0;
+for(int j=0;j<3;j++)//col check for combo of o
+{
+if(flag!=3)
+flag=0;
+for(int i=0;i<3;i++)
+{
+if(ac[i][j]==0)
+flag++;
+if(flag==3)
+{
+l.setText("The Winner is "+l4.getText());
+dis();
+}
+}
+}
+if((flag>=3)&&(check!=1))
+{
+++wino;
+l6.setText(Integer.toString(wino));
+t.run();
+}
+
+flag=0;
+for(int i=0;i<3;i++)//check leftcorner to rightcorner diagonal combo of x
+{
+for(int j=0;j<3;j++)
+{
+if(i==j){
+if(ac[i][j]==1)
+flag++;
+if((flag>=3)&&(check!=1))
+{
+l.setText("The Winner is "+l3.getText());
+++winx;
+l5.setText(Integer.toString(winx));
+dis();
+t.run();}}
+}
+}
+
+flag=0;
+for(int i=0;i<3;i++)//check leftcorner to rightcorner diagonal combo of o
+{
+for(int j=0;j<3;j++)
+{
+if(i==j){
+if(ac[i][j]==0)
+flag++;
+if(flag==3)
+{
+l.setText("The Winner is "+l4.getText());
+
+dis();
+}
+}
+}
+}
+if((flag>=3)&&(check!=1)){
+++wino;
+l6.setText(Integer.toString(wino));t.run();}
+
+flag=0;int j=2;
+for(int i=0;i<3;i++)//check r8corner to lftcorner diagonal combo of x
+{
+if(ac[i][j]==1)
+flag++;
+j--;
+if(flag==3)
+{
+l.setText("The Winner is "+l3.getText());
+
+dis();
+}
+}
+if((flag>=3)&&(check!=1))
+{
+++winx;
+l5.setText(Integer.toString(winx));
+t.run();
+}
+
+flag=0; j=2;
+for(int i=0;i<3;i++)//check r8corner to lftcorner diagonal combo of o
+{
+if(ac[i][j]==0)
+flag++;
+j--;
+if(flag==3)
+{
+l.setText("The Winner is "+l4.getText());
+dis(); 
+}
+}
+if((flag>=3)&&(check!=1))
+{
+++wino;
+l6.setText(Integer.toString(wino));
+t.run();}
+flag=0;
+}
+
+//***********************************//
+public static void main(String arg[])
+{
+OurTicTacToe f1=new OurTicTacToe();
+f1.setTitle("TIC_TAC_TOE:(X,O):");
+f1.setSize(1000,900);
+Color c=new Color(128,128,128); 
+f1.setBackground(c);
+f1.setForeground(Color.red);
+f1.setVisible(true);
+f1.addWindowListener(new mywindowclose());
+}
+}
